@@ -1,0 +1,11 @@
+{% extends "base.html"%}
+
+{% block mainContent %}
+    {% if result %}
+        <div class="">
+            {% for row in result %}
+                {{row }} <br>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock%}

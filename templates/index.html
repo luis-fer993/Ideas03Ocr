@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{%block mainContent %}
+
+        {% if (data) %}
+            <div class="container mt-5 mb-3 text-center alert alert-info">
+                {{ data  }}
+            </div>
+        {% endif %}
+        
+
+        <h1 class="h1">{{ PageName }}</h1>
+        {% if (typeProcess=='login') %}
+        <div class="m-5">
+            <form action="upload" method="post" enctype="multipart/form-data">
+                <label for="formFile" class="form-label">Default file input example</label>
+                <input class="form-control" type="file" id="formFile" name="file" required>
+                <br>
+                <button class="btn btn-primary">Enviar</button>
+            </form>
+        </div>
+        {% elif (typeProcess=='dataViwer') %}
+                <div class="container table-cont" style="width: 50vw;">
+                    <form action="process" method="post" >
+                        <table class="table table-bordered table-hover" border="1px">
+                            {% for item in processResult %}
+                                <tr>
+                                        <td>
+                                            <label for="">{{ item }}  </label>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="colmna" value="{{ item }}">
+                                        </td>
+                                </tr>    
+                            {% endfor%}
+                        </table>
+                        <button class="btn btn-primary">Enviar</button>
+                    </form>
+                </div>
+                <div class="table-head">
+                    {{fileHeaders}}
+
+                    {% for item in fileHeaders %}
+                    {{fileHeaders}}    <br>      
+                    {% endfor%}
+                </div>
+        {% endif %}
+
+{% endblock %}
