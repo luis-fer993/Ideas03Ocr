@@ -23,26 +23,48 @@
                 <div class="container table-cont" style="width: 50vw;">
                     <form action="process" method="post" >
                         <table class="table table-bordered table-hover" border="1px">
-                            {% for item in processResult %}
+                            
                                 <tr>
                                         <td>
                                             <label for="">{{ item }}  </label>
                                         </td>
                                         <td>
-                                            <input type="checkbox" name="colmna" value="{{ item }}">
+                                            <select class="" aria-label=".form-select-lg example" name="Opcion" >
+                                                <option >Opcion </option>
+                                                {% for item in processResult %}
+                                                    <option value="{{ item }}">{{ item }}</option>
+                                                {% endfor%}
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <input type="checkbox" name="{{ item }}" value="{{ item }}">
                                         </td>
                                 </tr>    
-                            {% endfor%}
+                            
                         </table>
                         <button class="btn btn-primary">Enviar</button>
                     </form>
                 </div>
                 <div class="table-head">
-                    {{fileHeaders}}
-
-                    {% for item in fileHeaders %}
-                    {{fileHeaders}}    <br>      
-                    {% endfor%}
+                    {% if  result %}
+                    <div class="">
+                        <table class="table table-bordered table-hover" border="2px">
+                        {% for row in result %}
+                        <tr>
+                            {% for value in row %}
+                                <td>
+                                    {{ value }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    </div>
+            
+                    {%for line in req %}
+                        {{line}}
+                    {% endfor %}
+                {% endif %}
                 </div>
         {% endif %}
 

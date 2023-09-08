@@ -1,11 +1,23 @@
 {% extends "base.html"%}
 
 {% block mainContent %}
-    {% if result %}
+    {% if  result %}
         <div class="">
+            <table class="table table-bordered table-hover" border="2px">
             {% for row in result %}
-                {{row }} <br>
+            <tr>
+                {% for value in row %}
+                    <td>
+                        {{ value }}
+                    </td>
+                {% endfor %}
+            </tr>
             {% endfor %}
+        </table>
         </div>
+
+        {%for line in req %}
+            {{line}}
+        {% endfor %}
     {% endif %}
 {% endblock%}

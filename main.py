@@ -4,6 +4,7 @@ import requests
 import os
 from mysql.connector import connect , Error
 
+
 class DataProcess():
     def __init__(self, data_path,extFile):
         self.extFile=extFile
@@ -19,12 +20,12 @@ class DataProcess():
         return self.csvFile.tail(5)
     
 class DB():
-    def __init__(self, dbName):
+    def __init__(self, dbName=''):
         self.host='meiko-prod.cmebrzxfmsvx.us-east-2.rds.amazonaws.com'
         self.user='support_data'
         self.password='puHnBWtMOzQzHarQMhnmhooy'
         self.port=3306
-        self.dbName= dbName
+        self.dbName= dbName 
         self.config = {
                 'user': self.user,
                 'password': self.password,
@@ -34,12 +35,18 @@ class DB():
                 'raise_on_warnings': True
         }
         
-    def _newQuery(self):
-      pass  
-        
-    def _close(self):
-        self.cursor.close()
-        self.connetion.close()
+    def _newQuerySelect(self, query,responseType=''):
+        query="SELECT * FROM jobOrder.sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
+        conn=connect(**self.config)
+        try:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            result=cursor.fetchall()
+        except Error as e:
+            return f'An Error ocurred {e}'
+        cursor.close() 
+        conn.close
+        return result    
         
         
 

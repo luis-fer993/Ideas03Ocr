@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from main import DataProcess, DB
-from mysql.connector import connect , Error
 
 
 app=Flask(__name__)
@@ -42,24 +41,20 @@ def upload_file():
     else: return '404',404
 
 
-@app.route('/process')
+@app.route('/process',methods=['POST','GET'])
 def process():
-    conn= DB('jobOrder')
-    query="SELECT * FROM sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
-    try:
-        connection=connect(**conn.config)
-        cursor = connection.cursor()
-        result=cursor.execute(query)
-    except Error as e:
-        return f'An Error ocurred {e}'
-    ctx={
-        'result':result
-    }
-    cursor.close() 
-    connection.close()
-    return render_template('process.html',**ctx)
-    
-    
+    if request.method=='POST':
+        for column in request.form:
+            pass
+        conn= DB()
+        query="SELECT * FROM jobOrder.sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
+        ctx={
+            'result':conn._newQuerySelect(query)
+            #'req':data
+        }
+        return render_template('process.html',**ctx)
+    else:
+        return '404', 404
 
     
 
