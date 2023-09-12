@@ -17,7 +17,10 @@ class DataProcess():
         #data1=csvFile.loc[csvFile['CodifoclienteKof_Mex'].notna()==False,['idEstablecimiento','FotoStickerFemsa','CodifoclienteKof_Mex']].head(5) #obtenenemos las filas que no tienen Codigo Aun
 
     def _dataProcessHead(self):
-        return self.csvFile.tail(5)
+        file=self.csvFile.tail(5)
+        file.to_numpy()
+        f1=file.shape
+        return f1
     
 class DB():
     def __init__(self, dbName=''):

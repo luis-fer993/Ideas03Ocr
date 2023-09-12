@@ -26,36 +26,46 @@
                             
                                 <tr>
                                         <td>
-                                            <label for="">{{ item }}  </label>
+                                            <label for="">Imagen a Extraer</label>
                                         </td>
                                         <td>
-                                            <select class="" aria-label=".form-select-lg example" name="Opcion" >
+                                            <select class="" aria-label=".form-select-lg example" name="imagen" required >
                                                 <option >Opcion </option>
                                                 {% for item in processResult %}
                                                     <option value="{{ item }}">{{ item }}</option>
                                                 {% endfor%}
                                             </select>
                                         </td>
-                                        <td>
-                                            <input type="checkbox" name="{{ item }}" value="{{ item }}">
-                                        </td>
                                 </tr>    
-                            
+                                <tr>
+                                    <td>
+                                        <label for="">Valor comparador</label>
+                                    </td>
+                                    <td>
+                                        <select class="" aria-label=".form-select-lg example" name="comparador" required >
+                                            <option >Opcion </option>
+                                            {% for item in processResult %}
+                                                <option value="{{ item }}">{{ item }}</option>
+                                            {% endfor%}
+                                        </select>
+                                    </td>
+                                </tr>                         
                         </table>
                         <button class="btn btn-primary">Enviar</button>
                     </form>
                 </div>
                 <div class="table-head">
-                    {% if  result %}
+                    {% if  typeProcess %}
                     <div class="">
                         <table class="table table-bordered table-hover" border="2px">
-                        {% for row in result %}
+                        {% for row in fileHead %}
                         <tr>
-                            {% for value in row %}
+                            {#% for value in row %}
                                 <td>
-                                    {{ value }}
+                                    {{ row }}
                                 </td>
-                            {% endfor %}
+                            {% endfor %#}
+                            <td> {{row}}</td>
                         </tr>
                         {% endfor %}
                     </table>

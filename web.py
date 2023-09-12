@@ -34,7 +34,7 @@ def upload_file():
             'PageName':PageName,
             'typeProcess':'dataViwer',
             'processResult':File._dataProcessHeaders(),
-            'fileHeaders':File._dataProcessHead(),
+            'fileHead':File._dataProcessHead(),
             'conn': File
         }
         return render_template('index.html',**ctx)
