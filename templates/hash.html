@@ -1,0 +1,25 @@
+{% extends "base.html"%}
+
+{% block mainContent %}
+<div class="container">
+    <form action="" method="post">
+
+        {% for option in [
+            countries,
+            cycles,
+            studies,
+            clients
+            ] %}
+        <label for="{{option[0]}}">Selecciona el pais</label>
+        <select name="{{option[0].key}}" id="{{option[0]}}">
+            {% for value1 in option[0] %}
+            <option value="{{value1['nombre']}}">{{value1['nombre']}}</option>
+            {%endfor%}
+        </select>
+        {%endfor%}
+
+
+    </form>
+</div>
+
+{% endblock%}

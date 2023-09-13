@@ -39,10 +39,10 @@ class DB():
         }
         
     def _newQuerySelect(self, query,responseType=''):
-        query="SELECT * FROM jobOrder.sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
+        #query="SELECT * FROM jobOrder.sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
         conn=connect(**self.config)
         try:
-            cursor = conn.cursor()
+            cursor = conn.cursor(dictionary=True)
             cursor.execute(query)
             result=cursor.fetchall()
         except Error as e:

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
 from main import DataProcess, DB
-
+conn= DB()
 
 app=Flask(__name__)
 
@@ -46,7 +46,6 @@ def process():
     if request.method=='POST':
         for column in request.form:
             pass
-        conn= DB()
         query="SELECT * FROM jobOrder.sp_mega_job_nf WHERE anio = 2023 LIMIT 10"
         ctx={
             'result':conn._newQuerySelect(query)
@@ -55,6 +54,21 @@ def process():
         return render_template('process.html',**ctx)
     else:
         return '404', 404
+    
+@app.route('/hashcompare')
+def hashcompare():
+    ctxhash={}
+    ctxhash['countries']='''select * from geomaster.paises'''
+    ctxhash['cycles']='''select * from jobOrder.ciclos'''
+    ctxhash['studies']='''select * from jobOrder.estudios'''
+    ctxhash['clients']='''select * from jobOrder.clientes '''
+    #ctxhash['meditionTypes']='''SELECT	DISTINCT tipos_medicion FROM jobOrder.sp_mega_job_nf'''
+
+    for val in (ctxhash.keys()):
+        v1=ctxhash[val]
+        ctxhash[val]=conn._newQuerySelect(v1)
+    return render_template('hash.html',**ctxhash)
+    
 
     
 
