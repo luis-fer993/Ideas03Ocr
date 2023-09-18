@@ -55,18 +55,38 @@ def process():
     else:
         return '404', 404
     
-@app.route('/hashcompare')
+@app.route('/hashcompare', methods=['GET','POST'])
 def hashcompare():
     ctxhash={}
     ctxhash['countries']='''select * from geomaster.paises'''
     ctxhash['cycles']='''select * from jobOrder.ciclos'''
     ctxhash['studies']='''select * from jobOrder.estudios'''
     ctxhash['clients']='''select * from jobOrder.clientes '''
+    ctxhash['anios']='''select * from jobOrder.anios '''
     #ctxhash['meditionTypes']='''SELECT	DISTINCT tipos_medicion FROM jobOrder.sp_mega_job_nf'''
-
     for val in (ctxhash.keys()):
         v1=ctxhash[val]
         ctxhash[val]=conn._newQuerySelect(v1)
+        
+    if not request.method == 'GET':
+        if ctxhash.keys() not in request.form:
+            ctxhash['responseHash'] == 'No hay datos '        
+        querySpMegaJob = (f"""SELECT
+	    DISTINCT llave_job AS HASHMGJ, ll.tipos_medicion 
+        FROM
+	    jobOrder.sp_mega_job_nf ll
+        WHERE
+	    estado_job = 'Activo'
+	    AND ciclo = '{cycle}'
+	    AND anio = '{anio}'
+	    AND pais = '{country}'
+	    AND estudio  = '{study}'
+	    AND tipos_medicion LIKE '%%'
+	    AND empresas LIKE '%{company}%';""")
+        
+        
+        ctxhash['responseHash']=True
+        
     return render_template('hash.html',**ctxhash)
     
 

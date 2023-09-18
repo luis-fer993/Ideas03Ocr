@@ -1,25 +1,55 @@
 {% extends "base.html"%}
 
 {% block mainContent %}
+<h1>Hash Validator</h1>
 <div class="container">
-    <form action="" method="post">
-
-        {% for option in [
-            countries,
-            cycles,
-            studies,
-            clients
-            ] %}
-        <label for="{{option[0]}}">Selecciona el pais</label>
-        <select name="{{option[0].key}}" id="{{option[0]}}">
-            {% for value1 in option[0] %}
-            <option value="{{value1['nombre']}}">{{value1['nombre']}}</option>
-            {%endfor%}
+    
+    {% if not responseHash %}
+    <form action="hashcompare" method="post">
+        <label for="countries">Selecciona el pais</label>
+        <select name="countries" id="countries" required>
+            {% for item in countries%}
+                <option value="{{item['nombre']}}">{{item['nombre']}}</option>
+            {% endfor %}
         </select>
-        {%endfor%}
-
-
+        <br>
+        <label for="cycles">Selecciona el ciclo</label>
+        <select name="cycles" id="cycles" required>
+            {% for item in cycles%}
+                <option value="{{item['valor']}}">{{item['valor']}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="anio">Selecciona el Anio</label>
+        <select name="anios" id="anio" required>
+            {% for item in anios%}
+                <option value="{{item['valor']}}">{{item['valor']}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="studies">Selecciona el Estudio</label>
+        <select name="studies" id="studies" required>
+            {% for item in studies%}
+                <option value="{{item['nombre']}}">{{item['nombre']}}</option>
+            {% endfor %}
+        </select>
+        <br>
+        <label for="clients">Selecciona el Cliente</label>
+        <select name="clients" id="clients" required>
+            {% for item in clients%}
+                <option value="{{item['nombre']}}">{{item['nombre']}}</option>
+            {% endfor %}
+        </select>
+        <br><br>
+        <button class="btn btn-primary">Enviar</button>
     </form>
+    {% endif %}
+
+    {% if responseHash %}
+        <div class="hasresult">
+
+        </div>
+    {% endif %}
 </div>
 
 {% endblock%}
