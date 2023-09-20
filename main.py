@@ -52,7 +52,17 @@ class DB():
         return result    
         
         
-
-
-
+def testProcess(idStudio,tpst='otro'):
+    if tpst == 'otro':url =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
+    else: url= ''
+    req = requests.get(url)
+    if req.status_code==200:
+        path=f'tmp/Studytest{idStudio}.csv'
+        with open(path, 'wb') as file:
+            file.write(req.content)
+        data= pd.read_csv(path).tail(5)
+        result=data.to_numpy()
+        f1=result.shape
+        return data
+    else: return f'Error en la consulta {req.status_code}'
 

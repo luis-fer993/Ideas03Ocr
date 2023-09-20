@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
-from main import DataProcess, DB
+from main import DataProcess, DB, testProcess
+import pandas as pd
 conn= DB()
+
+#import flask
 
 app=Flask(__name__)
 
@@ -90,8 +93,16 @@ def hashcompare():
     return render_template('hash.html',**ctxhash)
     
 
-    
 
-
+#from prueba import datos 
+@app.route('/test', methods=['GET','POST'])
+def test():
+    resultado=''
+    if request.method=='POST':
+        idEstudio1=request.form.get('idEstudio')
+        tipoEstudio  =request.form.get('tipoEstudio')
+        resultado = testProcess(tpst=tipoEstudio, idStudio=idEstudio1)
+    var={'result':resultado}
+    return render_template('test.html',**var)
 
 
