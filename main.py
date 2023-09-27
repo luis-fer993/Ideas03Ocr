@@ -3,7 +3,8 @@ import pandas as pd
 import requests
 import os
 from mysql.connector import connect , Error
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class DataProcess():
     def __init__(self, data_path,extFile):
@@ -24,7 +25,7 @@ class DataProcess():
     
 class DB():
     def __init__(self, dbName=''):
-        self.host='meiko-prod.cmebrzxfmsvx.us-east-2.rds.amazonaws.com'
+        self.host=os.getenv("HOST")
         self.user='support_data'
         self.password='puHnBWtMOzQzHarQMhnmhooy'
         self.port=3306
@@ -52,17 +53,26 @@ class DB():
         return result    
         
         
-def testProcess(idStudio,tpst='otro'):
+def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=5):
     if tpst == 'otro':url =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
-    else: url= ''
+    else: url= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
     req = requests.get(url)
     if req.status_code==200:
         path=f'tmp/Studytest{idStudio}.csv'
         with open(path, 'wb') as file:
             file.write(req.content)
-        data= pd.read_csv(path).tail(5)
-        result=data.to_numpy()
-        f1=result.shape
-        return data
-    else: return f'Error en la consulta {req.status_code}'
+            file.close()
+            
+        with open(path, 'rb') as fileRead:
+            line_count = sum(1 for line in fileRead)
+            if line_count <=2 :
+                return f'No hay registros #{line_count}' 
+            else:
+                data= pd.read_csv(path).tail(nrecord)
+                data= data[['Auditor','Response.Received','Descripcion','responseModified','ENCUESTADOR','pre_nombreestablecimiento']]
+                result=data.to_numpy()
+                result=data.to_dict(orient='records')
+                #f1=result.shape
+                return result
+    else: return f'Error en la consulta Estudio no encontrado  http:{req.status_code}'
 

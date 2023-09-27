@@ -6,7 +6,7 @@ conn= DB()
 
 #import flask
 
-app=Flask(__name__)
+app=Flask(__name__,static_url_path='/static')
 
 @app.route('/')
 def index():
@@ -65,7 +65,7 @@ def hashcompare():
     ctxhash['cycles']='''select * from jobOrder.ciclos'''
     ctxhash['studies']='''select * from jobOrder.estudios'''
     ctxhash['clients']='''select * from jobOrder.clientes '''
-    ctxhash['anios']='''select * from jobOrder.anios '''
+    ctxhash['anios']='''select * from jobOrder.anios '''  
     #ctxhash['meditionTypes']='''SELECT	DISTINCT tipos_medicion FROM jobOrder.sp_mega_job_nf'''
     for val in (ctxhash.keys()):
         v1=ctxhash[val]
@@ -97,12 +97,19 @@ def hashcompare():
 #from prueba import datos 
 @app.route('/test', methods=['GET','POST'])
 def test():
-    resultado=''
+    var={}
+    var['result']=''
     if request.method=='POST':
         idEstudio1=request.form.get('idEstudio')
         tipoEstudio  =request.form.get('tipoEstudio')
-        resultado = testProcess(tpst=tipoEstudio, idStudio=idEstudio1)
-    var={'result':resultado}
+        fechai, fechaf = request.form.get('inicioIce').replace('-','') ,request.form.get('finIce').replace('-','')
+        nRecords=int(request.form.get('nRecords'))
+        #['2023', '09', '13'] exampe date 
+        # 0 anio  1 month  2 day    
+        resultado = testProcess(tpst=tipoEstudio, idStudio=idEstudio1, finicio=fechai, ffin=fechaf, nrecord=nRecords)
+        if type(resultado)==list:var['result']=resultado
+        else: var['alerts']=resultado
     return render_template('test.html',**var)
+
 
 
