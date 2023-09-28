@@ -3,6 +3,8 @@ import pandas as pd
 import requests
 import os
 from mysql.connector import connect , Error
+import re
+from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -58,6 +60,9 @@ def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=5):
     else: url= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
     req = requests.get(url)
     if req.status_code==200:
+        
+        #falta modulo de eliminacion archivos temporales estudios slecionados por nombre
+        
         path=f'tmp/Studytest{idStudio}.csv'
         with open(path, 'wb') as file:
             file.write(req.content)
@@ -76,3 +81,14 @@ def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=5):
                 return result
     else: return f'Error en la consulta Estudio no encontrado  http:{req.status_code}'
 
+
+def StudyModificator():
+    FilePathBase=Path('db','BaseEstudios.csv')
+    with open(FilePathBase, 'wb') as BaseWirtte:
+        BaseWirtte.write()#terminar
+        BaseWirtte.close()
+    
+    with open(FilePathBase, 'rb') as BaseRead:
+        BaseRead.write()#terminar
+        BaseRead.close()    
+        
