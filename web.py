@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename
-from main import DataProcess, DB, testProcess
+from main import DataProcess, DB, testProcess, baseStudiesOperations, baseQuery
 import pandas as pd
 conn= DB()
 
@@ -99,17 +99,42 @@ def hashcompare():
 def test():
     var={}
     var['result']=''
-    if request.method=='POST':
-        idEstudio1=request.form.get('idEstudio')
-        tipoEstudio  =request.form.get('tipoEstudio')
-        fechai, fechaf = request.form.get('inicioIce').replace('-','') ,request.form.get('finIce').replace('-','')
-        nRecords=int(request.form.get('nRecords'))
+    var['studies']=baseStudiesOperations()
+    #http://127.0.0.1:5000/test?Estudio=392
+    if request.method=='POST' or request.method=='GET' and (request.args.get('Estudio') != None):
+        
+        options = int(request.form.get('options') or 0) 
+        if options == 1:
+            Estudio=request.form.get('idEstudio')
+            fechai, fechaf = request.form.get('fechaInicio').replace('-','') ,request.form.get('fechaFin').replace('-','')
+        else:
+            Estudio=int(request.form.get('Estudio') or request.args.get('Estudio'))
+            fechai, fechaf = '',''
+        
+        nRecords=int(request.form.get('nRecords') or 30)
         #['2023', '09', '13'] exampe date 
         # 0 anio  1 month  2 day    
-        resultado = testProcess(tpst=tipoEstudio, idStudio=idEstudio1, finicio=fechai, ffin=fechaf, nrecord=nRecords)
+        resultado = testProcess(tpst='otro', idStudio=Estudio, finicio=fechai, ffin=fechaf, nrecord=nRecords)
         if type(resultado)==list:var['result']=resultado
         else: var['alerts']=resultado
     return render_template('test.html',**var)
 
+@app.route('/studymanager',methods=['GET','POST'])
+def StudyManager():
+    ctx={}
+    ctx['studies']=baseStudiesOperations()
+    ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''')
+    if request.method=='POST':
+        dataList={}
+        dataList['idtabla']=int(request.form.get('idtabla'))
+        dataList['estudio']=request.form.get('estudio')
+        dataList['descripcion']=request.form.get('descripcion')
+        dataList['idestudio']=int(request.form.get('idestudio'))
+        
+        ctx['alerts']=baseStudiesOperations(operation='w',data=dataList)
+        
+        
+    return render_template('studymanager.html',**ctx)
 
-
+if __name__=='__main__':
+    app.run(debug=True)#host="0.0.0.0", port=80

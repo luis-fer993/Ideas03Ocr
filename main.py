@@ -5,6 +5,7 @@ import os
 from mysql.connector import connect , Error
 import re
 from pathlib import Path
+import sqlite3
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -55,7 +56,7 @@ class DB():
         return result    
         
         
-def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=5):
+def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=30):
     if tpst == 'otro':url =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
     else: url= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
     req = requests.get(url)
@@ -75,20 +76,54 @@ def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=5):
             else:
                 data= pd.read_csv(path).tail(nrecord)
                 data= data[['Auditor','Response.Received','Descripcion','responseModified','ENCUESTADOR','pre_nombreestablecimiento']]
+                
                 result=data.to_numpy()
                 result=data.to_dict(orient='records')
+                #result=data.to_html(classes='table table-striped tablacss')
                 #f1=result.shape
+                #result=data.to_html(classes='table table-dark')
                 return result
     else: return f'Error en la consulta Estudio no encontrado  http:{req.status_code}'
 
 
-def StudyModificator():
+def baseStudiesOperations(operation='r',data={}):
+    #defult read file and data (r)
+    #writte with (w)
+    # path db/base.csv
     FilePathBase=Path('db','BaseEstudios.csv')
-    with open(FilePathBase, 'wb') as BaseWirtte:
-        BaseWirtte.write()#terminar
-        BaseWirtte.close()
-    
-    with open(FilePathBase, 'rb') as BaseRead:
-        BaseRead.write()#terminar
-        BaseRead.close()    
+    if operation == 'w':
         
+        newEdit=pd.read_csv(FilePathBase)
+        idEspecifico=newEdit[['idtabla']==data['idtabla']]
+        
+        
+        with open(FilePathBase, 'wb') as BaseWirtte:
+            BaseWirtte.write()#terminar
+            BaseWirtte.close()
+    else:
+        BaseRead = pd.read_csv(FilePathBase)
+        result = BaseRead.to_dict(orient='records')
+    return result
+        
+def baseQuery():
+    FilePathBase=Path('db','BaseEstudios.db')
+    conn = sqlite3.connect(FilePathBase)
+    cursor = conn.cursor()
+    # Define the SQL statement to create a table
+    create_table_sql = '''
+    CREATE TABLE IF NOT EXISTS easyestudios (
+        idtabla INTEGER PRIMARY KEY,
+        estudio TEXT,
+        descripcion TEXT,
+        idestudio INTEGER
+    );
+    '''
+    query="""
+    SELECT * FROM easyestudios
+    """
+    cursor.execute(query)
+    data=cursor.fetchall()
+    conn.commit()
+    conn.close()
+    return data
+    

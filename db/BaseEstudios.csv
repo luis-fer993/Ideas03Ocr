@@ -1,1 +1,4 @@
-IdTabla,Estudio,IdEstudio
+idtabla,estudio,descripcion,idestudio
+1,EDGE,Col Edge 1023,333333
+2,EDGE,Col Edge4 1024,8888888
+3,EDGE,Prueba01,11
