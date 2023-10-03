@@ -130,7 +130,7 @@
       </h2>
       <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <table border="1" id="myTable" class="display table">
+            <table border="1" id="myTableResult" class="display table">
                 <thead>
                     <tr>
                         {% for key in result[0].keys() %}
@@ -182,10 +182,27 @@
         }
     })
     */
-    new DataTable('#myTable', {
+    new DataTable('#myTableprb1', {
         info: false,
         ordering: false,
         paging: false
+    });
+
+    new DataTable('#myTableResult', {
+        columnDefs: [
+            {
+                targets: [0],
+                orderData: [0, 1]
+            },
+            {
+                targets: [1],
+                orderData: [1, 0]
+            },
+            {
+                targets: [3],
+                orderData: [4, 0]
+            }
+        ]
     });
     </script>
 
