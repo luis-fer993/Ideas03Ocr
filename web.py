@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from main import DataProcess, DB, testProcess, baseStudiesOperations, baseQuery
 import pandas as pd
@@ -123,18 +123,28 @@ def test():
 def StudyManager():
     ctx={}
     ctx['studies']=baseStudiesOperations()
+    ctx['rawcsv']=baseStudiesOperations(raw=True)
     ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''')
+    ctx['alert']=request.args.get('w')
+    
     if request.method=='POST':
         dataList={}
         dataList['idtabla']=int(request.form.get('idtabla'))
         dataList['estudio']=request.form.get('estudio')
         dataList['descripcion']=request.form.get('descripcion')
         dataList['idestudio']=int(request.form.get('idestudio'))
-        
-        ctx['alerts']=baseStudiesOperations(operation='w',data=dataList)
-        
-        
+
+        ctx['alert']=baseStudiesOperations(operation='w',data=dataList)
+        #ctx['alerts']=baseStudiesOperations(operation='w',rd=dataList['rawdata'])
+
     return render_template('studymanager.html',**ctx)
 
+@app.route('/studydata',methods=['POST'])
+def studydata():
+    ctx={}
+    data=request.form.get('rawdata').replace('\n','').replace('    ','')
+    ctx['w']=baseStudiesOperations(operation='w',rd=data)   
+    return redirect(url_for('StudyManager' ,**ctx))
+    
 if __name__=='__main__':
     app.run(debug=True)#host="0.0.0.0", port=80

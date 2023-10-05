@@ -1,12 +1,25 @@
 {% extends "base.html"%}
 
+{% block headers%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+{%endblock%}
 {% block mainContent %}
+
+{%if alert != None %}
+<script>
+    Swal.fire(
+  'Attention',
+  '{{alert}}'
+)
+
+</script>
+{% endif %}
 
 <h1>Modificacion Estudios Mensuales</h1>
 {%for row in studies%}
 
 <form action="" method="post">
-    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem " >
+    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem " id="FormCont">
         <thead>
             <!-- <tr><th colspan="4">Base Estudios Activos</th></tr> -->
             <tr>
@@ -27,7 +40,11 @@
                                 {% if key == 'estudio'%}
                                 <select name="{{key}}" id="" required >
                                     {%for study in listEst%}
-                                        <option value="{{study.nombre}}">{{study.nombre}}</option>
+                                    {% if study.nombre == value %}
+                                        <option value="{{study.nombre}}" selected>{{study.nombre}}</option>
+                                    {% else %}
+                                        <option value="{{study.nombre}}" >{{study.nombre}}</option>
+                                    {% endif %}
                                     {%endfor%}
                                 </select>
                                 {% else%}
@@ -39,15 +56,50 @@
                     </tr>
                 {#% endfor %#}
                 <tr>
-                    <td><button type="submit" class="btn btn-primary">Actualizar</button></td>
-                    <td colspan="3"><button type="button" class="btn btn-danger">Eliminar</button></td>
+                    <td><button type="submit" class="btn btn-primary">Enviar</button></td>
+                    <td colspan="3">
+                        <label for="">Eliminar</label>
+                        <label class="switch">
+                        <input type="checkbox" name="eliminar" id="btnEliminar">
+                        <span class="slider round"></span>
+                      </label>
+                    </td>
                 </tr>
         </tbody>
     </table>
     
 </form>
-<br><br>
+<br>
 {%endfor%}
+
+<!-- raw data input modification test -->
+<div class="accordion " id="accordionExample" style="width: 60vw; margin:0 auto">
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#collapseTwo" 
+      aria-expanded="true" 
+      aria-controls="collapseTwo">
+      Edicion Directa
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <form action="studydata" method="post">
+            <textarea name="rawdata" id="" cols="100" rows='10'>
+            {{rawcsv}}
+            </textarea>
+            <br>
+        <button class="btn btn-primary">Enviar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DB sqlite3 file read no ended   -->
 {%for x in studiesN2%}
 <form action="">
     <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem ">
@@ -95,4 +147,18 @@
     {{data}}
 </pre>
 {%endif%}
+{% block scripts %}
+    <script>
+        
+var btnEliminar = document.getElementById('btnEliminar')
+var FormCont= document.getElementById('FormCont')
+
+btnEliminar.addEventListener('change',()=>{
+    alert()
+})
+
+console.log(FormCont)
+console.log(FormCont.children())
+    </script>
+{% endblock %}
 {%endblock%}

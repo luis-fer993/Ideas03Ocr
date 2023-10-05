@@ -86,23 +86,40 @@ def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=30):
     else: return f'Error en la consulta Estudio no encontrado  http:{req.status_code}'
 
 
-def baseStudiesOperations(operation='r',data={}):
+def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
     #defult read file and data (r)
     #writte with (w)
     # path db/base.csv
     FilePathBase=Path('db','BaseEstudios.csv')
+    if operation == 'w' and rd != None:
+        with open(FilePathBase, 'wt', encoding='utf-8') as BaseWirtte:
+            BaseWirtte.write(rd)#terminar
+            BaseWirtte.close()
+            
+        return 'completado exitosamente'
+            
+            
     if operation == 'w':
         
         newEdit=pd.read_csv(FilePathBase)
-        idEspecifico=newEdit[['idtabla']==data['idtabla']]
+        idEspecifico=newEdit.loc[newEdit['idtabla']==data['idtabla']]
         
+        #newEdit.loc[int(idEspecifico.index[0]),'descripcion']='new9'
+
+        for val in  idEspecifico.keys():
+            newEdit.loc[int(idEspecifico.index[0]),val]=data[val]
+        newEdit.to_csv(FilePathBase,index=False)
         
-        with open(FilePathBase, 'wb') as BaseWirtte:
-            BaseWirtte.write()#terminar
-            BaseWirtte.close()
+        result='Completado Exitosamente'
+        
     else:
         BaseRead = pd.read_csv(FilePathBase)
         result = BaseRead.to_dict(orient='records')
+        if raw != False:
+            with open(FilePathBase, 'rt',encoding='utf-8') as BaseR:
+                result=BaseR.read()#terminar
+                BaseR.close() 
+            
     return result
         
 def baseQuery():
