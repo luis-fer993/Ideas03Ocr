@@ -56,42 +56,58 @@ class DB():
         return result    
         
         
-def testProcess(idStudio,tpst='otro', finicio ='' , ffin ='', nrecord=30):
-    if tpst == 'otro':url =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
-    else: url= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
-    req = requests.get(url)
-    if req.status_code==200:
+def testProcess(idStudio,tpst='pruebas', finicio ='' , ffin ='', nrecord=30):
+    url,req, result ={},{},{}
+    url['pruebas'] =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
+    url['produccion']= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
+    if tpst == 'pruebas':
+        req['pruebas'] = requests.get(url['pruebas'])
+    elif tpst == 'produccion':
+        req['produccion'] = requests.get(url['produccion'])
+    elif tpst == 'ambos':
+        for key, value in url.items():
+            req[key]=requests.get(value) # save the result in adict with each key on each environment
         
-        #falta modulo de eliminacion archivos temporales estudios slecionados por nombre
+        #req={'pruebas':reqestMethods,
+        #     'produccion':reqestMethods}
         
-        path=f'tmp/Studytest{idStudio}.csv'
-        with open(path, 'wb') as file:
-            file.write(req.content)
-            file.close()
-            
-        with open(path, 'rb') as fileRead:
-            line_count = sum(1 for line in fileRead)
-            if line_count <=2 :
-                return f'No hay registros #{line_count}' 
-            else:
-                data= pd.read_csv(path).tail(nrecord)
-                data= data[['Auditor','Response.Received','Descripcion','responseModified','ENCUESTADOR','pre_nombreestablecimiento']]
+    for k in req.keys(): # get the name of environment
+        path=Path('tmp',f'Studytest{idStudio}_{k}.csv') # set the name of file
+        
+        listFile=os.listdir(path=Path('tmp')) #removing temporal files 
+        matching_files = [filename for filename in listFile if re.match(f'Studytest_*', filename)]
+        for i in range(0,len(matching_files)):
+            if os.path.exists(path=Path('tmp',matching_files[i])):
+                os.remove(Path('tmp',matching_files[i]))
                 
-                result=data.to_numpy()
-                result=data.to_dict(orient='records')
-                #result=data.to_html(classes='table table-striped tablacss')
-                #f1=result.shape
-                #result=data.to_html(classes='table table-dark')
-                return result
-    else: return f'Error en la consulta Estudio no encontrado  http:{req.status_code}'
+        if req[k].status_code==200: #access to methods of each environmet
+            #falta modulo de eliminacion archivos temporales estudios slecionados por nombre
+            with open(path, 'wb') as file:
+                file.write(req[k].content) #writte the content
+                file.close()
+
+            with open(path, 'rb') as fileRead:
+                line_count = sum(1 for line in fileRead)
+                if line_count <=2 : #if there is no record 
+                    result[k] =[{'Informacion':f'No hay registros #{line_count}'} ]
+                else:
+                    data= pd.read_csv(path).tail(nrecord)#get the dataframe with numbers of rows
+                    data= data[['Auditor','Response.Received','Descripcion','responseModified','ENCUESTADOR','pre_nombreestablecimiento']]
+                    #setting headers 
+                    result[k]=data.to_dict(orient='records') #saving information
+        else: result[k]= [{'Informacion':f'Error en la consulta Estudio no encontrado  http:{k} : {req[k].status_code} '} ]
+    return result
 
 
 def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
     #defult read file and data (r)
+    #data is a dict with the inputs values 
+    #raw if we want get the raw file 
+    #rd if we want to writte raw data 
     #writte with (w)
     # path db/base.csv
     FilePathBase=Path('db','BaseEstudios.csv')
-    if operation == 'w' and rd != None:
+    if operation == 'w' and rd != None: #Writte file when a raw data is recived from form
         with open(FilePathBase, 'wt', encoding='utf-8') as BaseWirtte:
             BaseWirtte.write(rd)#terminar
             BaseWirtte.close()
@@ -99,29 +115,31 @@ def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
         return 'completado exitosamente'
             
             
-    if operation == 'w':
+    if operation == 'w': #writte when the data is recived from inputs forms
+        newEdit=pd.read_csv(FilePathBase) #read the file 
+        idEspecifico=newEdit.loc[newEdit['idtabla']==data['idtabla']] #get the row with the specific idtable
         
-        newEdit=pd.read_csv(FilePathBase)
-        idEspecifico=newEdit.loc[newEdit['idtabla']==data['idtabla']]
+        if data['eliminar']=='on': 
+            newEdit=newEdit[newEdit['idtabla'] != int(idEspecifico['idtabla'].values[0])] #remove row on idtable value
+        else:     
+            for val in  idEspecifico.keys():
+                newEdit.loc[int(idEspecifico.index[0]),val]=data[val] # put each value on specific row 
+        newEdit.to_csv(FilePathBase,index=False) #save the new file 
         
-        #newEdit.loc[int(idEspecifico.index[0]),'descripcion']='new9'
-
-        for val in  idEspecifico.keys():
-            newEdit.loc[int(idEspecifico.index[0]),val]=data[val]
-        newEdit.to_csv(FilePathBase,index=False)
+        result='Completado Exitosamente' 
         
-        result='Completado Exitosamente'
-        
-    else:
+    else: #just read file csv 
         BaseRead = pd.read_csv(FilePathBase)
-        result = BaseRead.to_dict(orient='records')
-        if raw != False:
+        result = BaseRead.to_dict(orient='records') #if we want to get the DataFrame 
+        if raw != False: #if we want to get the raw file data
             with open(FilePathBase, 'rt',encoding='utf-8') as BaseR:
                 result=BaseR.read()#terminar
                 BaseR.close() 
             
-    return result
-        
+    return result #return result depend on
+
+
+######### Test on Mysqli3 Base Local non implemented        
 def baseQuery():
     FilePathBase=Path('db','BaseEstudios.db')
     conn = sqlite3.connect(FilePathBase)

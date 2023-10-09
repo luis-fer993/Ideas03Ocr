@@ -11,6 +11,9 @@
   'Attention',
   '{{alert}}'
 )
+setTimeout(()=>{
+    window.location.href=`/studymanager`
+},2500)
 
 </script>
 {% endif %}
@@ -18,8 +21,8 @@
 <h1>Modificacion Estudios Mensuales</h1>
 {%for row in studies%}
 
-<form action="" method="post">
-    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem " id="FormCont">
+<form action="" method="post" class="FormCont">
+    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem " >
         <thead>
             <!-- <tr><th colspan="4">Base Estudios Activos</th></tr> -->
             <tr>
@@ -60,7 +63,7 @@
                     <td colspan="3">
                         <label for="">Eliminar</label>
                         <label class="switch">
-                        <input type="checkbox" name="eliminar" id="btnEliminar">
+                        <input type="checkbox" name="eliminar" class="btnEliminar">
                         <span class="slider round"></span>
                       </label>
                     </td>
@@ -88,7 +91,7 @@
     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <form action="studydata" method="post">
-            <textarea name="rawdata" id="" cols="100" rows='10'>
+            <textarea name="rawdata" id="" cols="100" rows='10' style="max-width: -webkit-fill-available;">
             {{rawcsv}}
             </textarea>
             <br>
@@ -150,15 +153,19 @@
 {% block scripts %}
     <script>
         
-var btnEliminar = document.getElementById('btnEliminar')
-var FormCont= document.getElementById('FormCont')
 
-btnEliminar.addEventListener('change',()=>{
-    alert()
-})
+var btnEliminar = document.querySelectorAll('.btnEliminar')
+var FormCont= document.querySelectorAll('.FormCont input, select')
 
-console.log(FormCont)
-console.log(FormCont.children())
+btnEliminar.forEach(element => {
+    element.addEventListener('change', ()=>{
+        for(i=0; i<FormCont.length ;i++){ 
+            if ( FormCont[i].getAttribute('type')=='checkbox' || FormCont[i].getAttribute('name')=='idtabla' ){continue }
+               FormCont[i].toggleAttribute("disabled",true)
+               //FormCont[i].setAttribute('value','000')
+        }
+    })
+});
     </script>
 {% endblock %}
 {%endblock%}

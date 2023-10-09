@@ -100,8 +100,8 @@ def test():
     var={}
     var['result']=''
     var['studies']=baseStudiesOperations()
-    #http://127.0.0.1:5000/test?Estudio=392
-    if request.method=='POST' or request.method=='GET' and (request.args.get('Estudio') != None):
+    #http://127.0.0.1:5000/test?Estudio=392&ambiente=pruebas
+    if request.method=='POST' or request.method=='GET' and (request.args.get('Estudio') != None and request.args.get('ambiente') != None):
         
         options = int(request.form.get('options') or 0) 
         if options == 1:
@@ -111,40 +111,42 @@ def test():
             Estudio=int(request.form.get('Estudio') or request.args.get('Estudio'))
             fechai, fechaf = '',''
         
+        ambiente=request.form.get('ambiente') or request.args.get('ambiente')
         nRecords=int(request.form.get('nRecords') or 30)
         #['2023', '09', '13'] exampe date 
         # 0 anio  1 month  2 day    
-        resultado = testProcess(tpst='otro', idStudio=Estudio, finicio=fechai, ffin=fechaf, nrecord=nRecords)
-        if type(resultado)==list:var['result']=resultado
+        resultado = testProcess(tpst=ambiente, idStudio=Estudio, finicio=fechai, ffin=fechaf, nrecord=nRecords)
+        if type(resultado)==dict:var['result']=resultado
         else: var['alerts']=resultado
     return render_template('test.html',**var)
 
 @app.route('/studymanager',methods=['GET','POST'])
 def StudyManager():
     ctx={}
-    ctx['studies']=baseStudiesOperations()
-    ctx['rawcsv']=baseStudiesOperations(raw=True)
-    ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''')
-    ctx['alert']=request.args.get('w')
+    ctx['studies']=baseStudiesOperations() #get DataFrame
+    ctx['rawcsv']=baseStudiesOperations(raw=True) #get raw File csv
+    ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''') # get list from DB
+    ctx['alert']=request.args.get('w') #if there is alerts
     
     if request.method=='POST':
-        dataList={}
+        dataList={}#inputs forms 
         dataList['idtabla']=int(request.form.get('idtabla'))
-        dataList['estudio']=request.form.get('estudio')
-        dataList['descripcion']=request.form.get('descripcion')
-        dataList['idestudio']=int(request.form.get('idestudio'))
+        dataList['estudio']='' or request.form.get('estudio') 
+        dataList['descripcion']='' or request.form.get('descripcion')
+        if request.form.get('idestudio') == 'NoneType': dataList['idestudio']= 000
+        else: dataList['idestudio']= request.form.get('idestudio')
+        dataList['eliminar']= request.form.get('eliminar')
 
         ctx['alert']=baseStudiesOperations(operation='w',data=dataList)
-        #ctx['alerts']=baseStudiesOperations(operation='w',rd=dataList['rawdata'])
 
     return render_template('studymanager.html',**ctx)
 
 @app.route('/studydata',methods=['POST'])
 def studydata():
     ctx={}
-    data=request.form.get('rawdata').replace('\n','').replace('    ','')
-    ctx['w']=baseStudiesOperations(operation='w',rd=data)   
-    return redirect(url_for('StudyManager' ,**ctx))
+    data=request.form.get('rawdata').replace('\n','').replace('    ','') # replace the new line with nothing
+    ctx['w']=baseStudiesOperations(operation='w',rd=data)   #send the information
+    return redirect(url_for('StudyManager' ,**ctx)) #redirect to page 
     
 if __name__=='__main__':
     app.run(debug=True)#host="0.0.0.0", port=80

@@ -78,7 +78,7 @@
                     <select name="ambiente" id="AmbienteEstudios" required> 
                         <option value="pruebas" selected>Pruebas</option>
                         <option value="produccion">Produccion</option>
-                        <option value="Ambos">Ambos</option>
+                        <option value="ambos">Ambos</option>
                     </select>
                 </td>
             </tr>
@@ -109,39 +109,37 @@
 {%endif%}
 
 {% if result != ''%}
-<div>
     <h1>Resultado </h1>
-
-
-
 <!-- inicio -->
 
 <div class="accordion" id="accordionExample">
+    {% for groupkey,groupvalue in result.items() %}
+
     <div class="accordion-item">
-      <h2 class="accordion-header" id="headingOne">
+      <h2 class="accordion-header" id="{{groupkey}}">
         <button class="accordion-button" 
         type="button" 
         data-bs-toggle="collapse" 
-        data-bs-target="#collapseOne" 
+        data-bs-target="#{{groupkey}}1" 
         aria-expanded="true" 
-        aria-controls="collapseOne">
-          Visualizacion Pruebas 
+        aria-controls="{{groupkey}}1">
+          Visualizacion {{groupkey}}
         </button>
       </h2>
-      <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div id="{{groupkey}}1" class="accordion-collapse collapse show" aria-labelledby="{{groupkey}}" data-bs-parent="#accordionExample">
         <div class="accordion-body">
             <table border="1" id="myTableResult" class="display table">
                 <thead>
                     <tr>
-                        {% for key in result[0].keys() %}
+                        {% for key in groupvalue[0].keys() %}
                             <th>{{ key }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in result %}
+                    {% for index in groupvalue%}
                         <tr>
-                            {% for value in row.values() %}
+                            {% for value in index.values() %}
                                 <td>{{ value }}</td>
                             {% endfor %}
                         </tr>
@@ -151,26 +149,9 @@
         </div>
       </div>
     </div>
-    <div class="accordion-item">
-      <h2 class="accordion-header" id="headingTwo">
-        <button class="accordion-button" 
-        type="button" 
-        data-bs-toggle="collapse" 
-        data-bs-target="#collapseTwo" 
-        aria-expanded="true" 
-        aria-controls="collapseTwo">
-        Visualizacion Produccion
-        </button>
-      </h2>
-      <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-        <div class="accordion-body">
-          
-        </div>
-      </div>
-    </div>
-  </div>
 
-</div>
+{% endfor %}
+  </div>
 {%endif%}
 
 <script>

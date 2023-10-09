@@ -31,3 +31,7 @@ AmbienteEstudios.addEventListener('change',()=>{
         'info')
     }
 })
+
+array.forEach(element => {
+    
+});
