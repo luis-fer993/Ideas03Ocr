@@ -36,6 +36,7 @@
         <br>
         <label for="clients">Selecciona el Cliente</label>
         <select name="clients" id="clients" required>
+            <option value=" "> </option>
             {% for item in clients%}
                 <option value="{{item['nombre']}}">{{item['nombre']}}</option>
             {% endfor %}
@@ -47,7 +48,25 @@
 
     {% if responseHash %}
         <div class="hasresult">
-
+<PRE>{{responseHash}}</PRE>
+<table border="1" id="myTableResult" class="display table">
+    <thead>
+        <tr>
+            {% for key in responseHash[0].keys() %}
+                <th>{{ key }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for index in responseHash%}
+            <tr>
+                {% for value in index.values() %}
+                    <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
         </div>
     {% endif %}
 </div>
