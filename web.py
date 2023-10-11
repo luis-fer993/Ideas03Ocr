@@ -1,12 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
+import base64
+from flask_login import LoginManager
 from werkzeug.utils import secure_filename
 from main import DataProcess, DB, testProcess, baseStudiesOperations, baseQuery
 import pandas as pd
+import main 
 conn= DB()
-
+login_manager = LoginManager()
 #import flask
 
 app=Flask(__name__,static_url_path='/static')
+login_manager.init_app(app)
+secretKey='d655029c9c33691ff8e30b7d3ab95c2a48f1f9c880cd52d2bb9d9ca4bffdc445'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.get(user_id)
+
 
 @app.route('/')
 def index():
@@ -120,8 +130,12 @@ def test():
         else: var['alerts']=resultado
     return render_template('test.html',**var)
 
-@app.route('/studymanager',methods=['GET','POST'])
+@app.route('/studymanager/',methods=['GET','POST'])
 def StudyManager():
+    usuario,password=request.args.get('user'),request.args.get('password')
+    passwordCheck= 'U2VjdXJpdHlQYXNzV29yZCoyMDIzKg=='.encode(encoding='utf-8')
+    if not (usuario=='Aplications' and base64.b64encode(password.encode(encoding = 'UTF-8')) == passwordCheck):
+        return redirect(url_for('test'))
     ctx={}
     ctx['studies']=baseStudiesOperations() #get DataFrame
     ctx['rawcsv']=baseStudiesOperations(raw=True) #get raw File csv
@@ -147,6 +161,10 @@ def studydata():
     data=request.form.get('rawdata').replace('\n','').replace('    ','') # replace the new line with nothing
     ctx['w']=baseStudiesOperations(operation='w',rd=data)   #send the information
     return redirect(url_for('StudyManager' ,**ctx)) #redirect to page 
+    
+@app.route('/login',methods=['POST','GET'])
+def login():
+    form = LoginManager()    
     
 if __name__=='__main__':
     app.run(debug=True)#host="0.0.0.0", port=80

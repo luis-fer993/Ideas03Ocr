@@ -102,53 +102,12 @@ setTimeout(()=>{
   </div>
 </div>
 
-<!-- DB sqlite3 file read no ended   -->
-{%for x in studiesN2%}
-<form action="">
-    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem ">
-        <tr>
-            <td>idtabla</td>
-            <td>estudio</td>
-            <td>descripcion</td>
-            <td>idestudio</td>
-        </tr>
-        <tr>
-            {%for val in x%}
-
-                            <td> 
-                            {% if x.index(val)==0%}
-                                <pre>{{val}}</pre>
-                            {% else%}
-                                {% if x.index(val)==1 %}
-                                <select name="estudio" id="" required >
-                                    {%for study in listEst%}
-                                        <option value="{{study.nombre}}">{{study.nombre}}</option>
-                                    {%endfor%}
-                                </select>
-                                {% else%}
-                                    <input type="text" name="{{key}}" value="{{val}}" required>
-                                {%endif%}
-                            {%endif%}
-                            </td>
-
-            <!-- <td>{{val}}</td> -->
-            {%endfor%}
-        </tr>
-    </table>
-</form>
-{%endfor%}
-
-<!-- <form action="" method="post">
-    <input type="text" name="descripcion">
-    <input type="text" name="descripcion">
-    <input type="text" name="descripcion">
-    <button type="submit">Enviar</button>
-</form> -->
 <button type="button" class="btn btn-warning">Nuevo</button>
-{%if data != None%}
-<pre>
-    {{data}}
-</pre>
+{%if userValidation == false%}
+<form action="" method="post">
+    <input type="text" name="user">
+    <input type="password" name="pass" id="">
+</form>
 {%endif%}
 {% block scripts %}
     <script>

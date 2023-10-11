@@ -22,7 +22,7 @@ class DataProcess():
 
     def _dataProcessHead(self):
         file=self.csvFile.tail(5)
-        file.to_numpy()
+        file.to_dict()
         f1=file.shape
         return f1
     
