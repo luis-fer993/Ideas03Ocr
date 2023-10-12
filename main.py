@@ -6,8 +6,8 @@ from mysql.connector import connect , Error
 import re
 from pathlib import Path
 import sqlite3
-from dotenv import load_dotenv
-load_dotenv()
+#from dotenv import load_dotenv
+#load_dotenv()
 
 class DataProcess():
     def __init__(self, data_path,extFile):

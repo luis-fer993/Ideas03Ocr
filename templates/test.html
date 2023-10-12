@@ -45,7 +45,7 @@
                 Lista Estudios Activos 
             </td>
             <td>
-                <select name="Estudio" id="Estudio">
+                <select name="Estudio" id="Estudio" class="form-select">
                     {% for estudy in studies%}
                         <option value="{{estudy.idestudio}}">{{estudy.descripcion}} </option>
                     {%endfor%}
@@ -58,7 +58,7 @@
                     Opciones Avanzadas
                 </td>
                 <td>
-                    <select name="options" id="advanced" >
+                    <select name="options" id="advanced" class="form-select">
                         <option value="0" selected>Elegir opcion</option>
                         <option value="1">Mostrar</option>
                     </select>
@@ -69,13 +69,13 @@
                     ID Estudio
                 </td>
                 <td>
-                    <input type="number" name="idEstudio" id="idEstudio"  class='required'>
+                    <input type="number" name="idEstudio" id="idEstudio"  class='required form-control' >
                 </td>
             </tr>
             <tr>
                 <td>Ambiente</td>
                 <td>
-                    <select name="ambiente" id="AmbienteEstudios" required> 
+                    <select name="ambiente" id="AmbienteEstudios" required class="form-select"> 
                         <option value="pruebas" selected>Pruebas</option>
                         <option value="produccion">Produccion</option>
                         <option value="ambos">Ambos</option>
@@ -88,19 +88,19 @@
                 </td>
                 <td>
                     <label for="fechaInicio">Fecha Inicio</label>
-                    <input type="date" name="fechaInicio" class='required'>
+                    <input type="date" name="fechaInicio" class='required form-control'>
                 </td>
             </tr>
             <tr class="hidden advancedContDate" style="display: none;">
                 <td>
                     <label for="fechaFin">Fecha Fin</label>
-                    <input type="date" name="fechaFin" class='required'>
+                    <input type="date" name="fechaFin" class='required form-control'>
                 </td>
             </tr>
         </div>
         <tr>
             <td>Cantidad Registros</td>
-            <td><input type="number" name="nRecords" id="" value="30" required></td>
+            <td><input type="number" name="nRecords" id="" value="30" class="form-control" required ></td>
         </tr>
     </table>
     <button  class="btn btn-primary">Enviar </button>

@@ -13,7 +13,9 @@ decorator==5.1.1
 et-xmlfile==1.1.0
 executing==1.2.0
 Flask==2.3.3
+Flask-Login==0.6.2
 Flask-MySQLdb==1.0.1
+Flask-WTF==1.2.1
 fonttools==4.42.0
 idna==3.4
 ipykernel==6.25.0
@@ -60,3 +62,4 @@ tzdata==2023.3
 urllib3==2.0.4
 wcwidth==0.2.6
 Werkzeug==2.3.7
+WTForms==3.1.0

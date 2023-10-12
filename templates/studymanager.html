@@ -41,7 +41,7 @@ setTimeout(()=>{
                                 <input type="hidden" name="{{key}}" value="{{value}}">
                             {% else%}
                                 {% if key == 'estudio'%}
-                                <select name="{{key}}" id="" required >
+                                <select name="{{key}}" id="" required class="form-select" >
                                     {%for study in listEst%}
                                     {% if study.nombre == value %}
                                         <option value="{{study.nombre}}" selected>{{study.nombre}}</option>
@@ -91,7 +91,7 @@ setTimeout(()=>{
     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
       <div class="accordion-body">
         <form action="studydata" method="post">
-            <textarea name="rawdata" id="" cols="100" rows='10' style="max-width: -webkit-fill-available;">
+            <textarea class="form-control" name="rawdata" id="" cols="100" rows='10' style="max-width: -webkit-fill-available;">
             {{rawcsv}}
             </textarea>
             <br>
