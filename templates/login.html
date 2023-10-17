@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block mainContent %}
+
+{% if alerts  %}
+    <script>
+        Swal.fire(
+            'Alert',
+            '{{alerts}}',
+            'warning')
+    </script>
+{% endif %}
 <h1>Acceso </h1>
 <div class="container" style="border: 2px solid black;border-radius:15px;width:min-content;background-color: lightgray;padding:1.5rem;margin:3rem auto">
     <form action="login" method="post" >

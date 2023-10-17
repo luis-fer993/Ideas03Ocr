@@ -25,7 +25,7 @@
     <main>
         <nav class="navbar bg-primary sticky-top navbar-expand-lg " data-bs-theme="dark">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Aplications Revission</a>
+                    <a class="navbar-brand" href="">Aplications Revission</a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                       </button>
@@ -34,6 +34,11 @@
                           <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="test">Test Verification</a>
                           </li>
+                          {% if Manager == true %}
+                            <li class="nav-item">
+                              <a class="nav-link btn btn-outline-success active" aria-current="page" href="/logout">Salir</a>
+                            </li>
+                          {% endif %}
                         </ul>
                     </div>
                   </div>

@@ -29,9 +29,9 @@ class DataProcess():
 class DB():
     def __init__(self, dbName=''):
         self.host=os.getenv("HOST")
-        self.user='support_data'
-        self.password='puHnBWtMOzQzHarQMhnmhooy'
-        self.port=3306
+        self.user=os.getenv('USERDB')
+        self.password=os.getenv('PASSWORDBB')
+        self.port=os.getenv('PORT')
         self.dbName= dbName 
         self.config = {
                 'user': self.user,

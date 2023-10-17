@@ -4,19 +4,16 @@ from flask_login import LoginManager
 from werkzeug.utils import secure_filename
 from main import DataProcess, DB, testProcess, baseStudiesOperations, baseQuery
 import pandas as pd
-import main 
+import os
+from flask_session import Session
 conn= DB()
-login_manager = LoginManager()
+
 #import flask
 
 app=Flask(__name__,static_url_path='/static')
-login_manager.init_app(app)
-secretKey='d655029c9c33691ff8e30b7d3ab95c2a48f1f9c880cd52d2bb9d9ca4bffdc445'
-
-@login_manager.user_loader
-def load_user(user_id):
-    return User.get(user_id)
-
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 @app.route('/')
 def index():
@@ -132,15 +129,14 @@ def test():
 
 @app.route('/studymanager/',methods=['GET','POST'])
 def StudyManager():
-    usuario,password=request.args.get('user'),request.args.get('password')
-    passwordCheck= 'U2VjdXJpdHlQYXNzV29yZCoyMDIzKg=='.encode(encoding='utf-8')
-    if not (usuario=='Aplications' and base64.b64encode(password.encode(encoding = 'UTF-8')) == passwordCheck):
+    if not session.get('user'):
         return redirect(url_for('test'))
     ctx={}
     ctx['studies']=baseStudiesOperations() #get DataFrame
     ctx['rawcsv']=baseStudiesOperations(raw=True) #get raw File csv
     ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''') # get list from DB
     ctx['alert']=request.args.get('w') #if there is alerts
+    ctx['Manager'] =True
     
     if request.method=='POST':
         dataList={}#inputs forms 
@@ -164,7 +160,30 @@ def studydata():
     
 @app.route('/login',methods=['POST','GET'])
 def login():
-    form = LoginManager()    
+    ctx={}
+    if session.get('user')==True:
+        return redirect(url_for('test'))
+    if request.method=='POST':
+        user = request.form.get('user')
+        password = request.form.get('pass') 
+        #check if data is correct, password equal to .ven value dencode on b64.
+        if user == os.getenv('user') and password == (base64.b64decode(os.getenv('password').encode())).decode(encoding='utf-8'):
+            session['user']=True
+            return redirect(url_for('StudyManager'))
+        else:
+            ctx['alerts']='Credenciales Invalidas'
+    return render_template('login.html',**ctx)
+    
+@app.route('/logout')
+def logout():
+    session['user']=None
+    return redirect(url_for('test'))
+    
+    
+@app.errorhandler(404)
+def error404(error):
+    return render_template('page_not_found.html'),404    
     
 if __name__=='__main__':
+    app.secret_key=os.getenv('secretKey')
     app.run(debug=True)#host="0.0.0.0", port=80
