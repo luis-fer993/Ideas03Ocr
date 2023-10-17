@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import base64
 from flask_login import LoginManager
 from werkzeug.utils import secure_filename
@@ -101,6 +101,26 @@ def hashcompare():
     
 
 
+
+
+@app.route('/test2', methods=['GET','POST'])
+def test2():
+    var={}
+    var['result']={}
+    var['studies']=baseStudiesOperations()
+    Estudio = request.args.get('estudioid')
+    resultado = testProcess(tpst='ambos',idStudio=Estudio, nrecord=30)
+    if type(resultado)==dict:
+        var['result']=resultado
+    else:
+        var['alerts']=resultado
+    
+    if Estudio ==None or '' and request.method=='GET':
+        return render_template('prueba.html',**var)
+    else:
+        return var
+
+
 #from prueba import datos 
 @app.route('/test', methods=['GET','POST'])
 def test():
@@ -154,9 +174,17 @@ def StudyManager():
 @app.route('/studydata',methods=['POST'])
 def studydata():
     ctx={}
-    data=request.form.get('rawdata').replace('\n','').replace('    ','') # replace the new line with nothing
-    ctx['w']=baseStudiesOperations(operation='w',rd=data)   #send the information
-    return redirect(url_for('StudyManager' ,**ctx)) #redirect to page 
+    if not request.form.get('newEdit') =='1':
+        data=request.form.get('rawdata').replace('\n','').replace('    ','') # replace the new line with nothing
+        ctx['w']=baseStudiesOperations(operation='w',rd=data)   #send the information
+        return redirect(url_for('StudyManager' ,**ctx)) #redirect to page 
+    EstNewData={}
+    EstNewData['idtabla']=request.form.get('idtabla')
+    EstNewData['estudio']=request.form.get('estudio')
+    EstNewData['descripcion']=request.form.get('descripcion')
+    EstNewData['idestudio']=request.form.get('idestudio')
+    ctx['w']=baseStudiesOperations(operation='n',data=EstNewData)
+    return redirect(url_for('StudyManager' ,**ctx))
     
 @app.route('/login',methods=['POST','GET'])
 def login():

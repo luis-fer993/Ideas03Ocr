@@ -105,15 +105,14 @@ def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
     #raw if we want get the raw file 
     #rd if we want to writte raw data 
     #writte with (w)
+    #n new entry
     # path db/base.csv
     FilePathBase=Path('db','BaseEstudios.csv')
     if operation == 'w' and rd != None: #Writte file when a raw data is recived from form
         with open(FilePathBase, 'wt', encoding='utf-8') as BaseWirtte:
             BaseWirtte.write(rd)#terminar
             BaseWirtte.close()
-            
-        return 'completado exitosamente'
-            
+        return 'completado exitosamente'    
             
     if operation == 'w': #writte when the data is recived from inputs forms
         newEdit=pd.read_csv(FilePathBase) #read the file 
@@ -127,6 +126,15 @@ def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
         newEdit.to_csv(FilePathBase,index=False) #save the new file 
         
         result='Completado Exitosamente' 
+        
+    elif operation == 'n':
+        newEntry={}
+        for k, v in data.items(): #create the dict 
+            newEntry[str(k)]=[v]
+        df=pd.DataFrame(newEntry) #Create a new df, based on a dict 
+        df.to_csv(FilePathBase,mode='a', index=False, header=False) #overwritte with the new information 
+        
+        result='Completado Exitosamente'   
         
     else: #just read file csv 
         BaseRead = pd.read_csv(FilePathBase)

@@ -38,7 +38,7 @@ setTimeout(()=>{
                             <td> 
                             {% if key == 'idtabla'%}
                                 <pre>{{value}}</pre>
-                                <input type="hidden" name="{{key}}" value="{{value}}">
+                                <input type="hidden" name="{{key}}" value="{{value}}" class="allidtables">
                             {% else%}
                                 {% if key == 'estudio'%}
                                 <select name="{{key}}" id="" required class="form-select" >
@@ -85,12 +85,57 @@ setTimeout(()=>{
       data-bs-target="#collapseTwo" 
       aria-expanded="true" 
       aria-controls="collapseTwo">
-      Edicion Directa
+      Agregar Nuevo 
       </button>
     </h2>
     <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
       <div class="accordion-body">
-        <form action="studydata" method="post">
+        <form action="/studydata" method="post">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {% for studioItem in studies[0].keys() %}
+                        <th>{{ studioItem }}</th>
+                        {%endfor%}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {% for key, value in studies[0].items() %}
+                            <td> 
+                            {% if key == 'idtabla'%}
+                            <input type="hidden" name="{{key}}" id="idtableNewfield">
+                            {% else%}
+                                {% if key == 'estudio'%}
+                                <select name="{{key}}" id="" required class="form-select" >
+                                    {%for study in listEst%}
+                                        <option value="{{study.nombre}}" >{{study.nombre}}</option>
+                                    {%endfor%}
+                                </select>
+                                {% else%}
+                                    <input type="text" name="{{key}}" value="" required>
+                                {%endif%}
+                            {%endif%}
+                            </td>
+                        {% endfor %}
+                        
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <center>
+                                <button class="btn btn-primary" style="margin: 0 auto;">Enviar</button>
+                            </center>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="hidden" name="newEdit" value="1">
+        </form>
+        <br><br>
+        <hr>
+        <h2>Edicion Directa de Estudios </h2>
+        <p>Tener cuidado y siempre agregar ID's diferentes en el campo IDTabla</p>
+        <form action="/studydata" method="post">
             <textarea class="form-control" name="rawdata" id="" cols="100" rows='10' style="max-width: -webkit-fill-available;">
             {{rawcsv}}
             </textarea>
@@ -102,20 +147,21 @@ setTimeout(()=>{
   </div>
 </div>
 
-<button type="button" class="btn btn-warning">Nuevo</button>
-{%if userValidation == false%}
-<form action="" method="post">
-    <input type="text" name="user">
-    <input type="password" name="pass" id="">
-</form>
-{%endif%}
 {% block scripts %}
     <script>
         
 
 var btnEliminar = document.querySelectorAll('.btnEliminar')
 var FormCont= document.querySelectorAll('.FormCont input, select')
+var allidtables=document.querySelectorAll('.allidtables')
+arraytemp=[]
+allidtables.forEach((item)=>{
+    arraytemp.push(item.value)
+})
+lastId=arraytemp.slice(-1)
+var idtableNewfield= document.getElementById('idtableNewfield')
 
+idtableNewfield.setAttribute('value',parseInt(lastId)+1)
 btnEliminar.forEach(element => {
     element.addEventListener('change', ()=>{
         for(i=0; i<FormCont.length ;i++){ 
