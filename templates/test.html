@@ -128,7 +128,7 @@
       </h2>
       <div id="{{groupkey}}1" class="accordion-collapse collapse show" aria-labelledby="{{groupkey}}" data-bs-parent="#accordionExample">
         <div class="accordion-body">
-            <table border="1" id="myTableResult" class="display table">
+            <table border="1" id="myTableResult{{groupkey}}" class="display table">
                 <thead>
                     <tr>
                         {% for key in groupvalue[0].keys() %}
@@ -149,27 +149,28 @@
         </div>
       </div>
     </div>
-
 {% endfor %}
   </div>
 {%endif%}
 
 <script>
-    /*$ajax({
-        url:'',
-        type:'',
-        data:{
-            
-        }
-    })
-    */
-    new DataTable('#myTableprb1', {
-        info: false,
-        ordering: false,
-        paging: false
-    });
-
-    new DataTable('#myTableResult', {
+    new DataTable(`#myTableResultpruebas`, {
+        columnDefs: [
+            {
+                targets: [0],
+                orderData: [0, 1]
+            },
+            {
+                targets: [1],
+                orderData: [1, 0]
+            },
+            {
+                targets: [3],
+                orderData: [4, 0]
+            }
+        ]
+    });    
+    new DataTable(`#myTableResultproduccion`, {
         columnDefs: [
             {
                 targets: [0],
@@ -186,7 +187,6 @@
         ]
     });
     </script>
-
 {% block scripts %}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>

@@ -59,7 +59,7 @@ class DB():
 def testProcess(idStudio,tpst='pruebas', finicio ='' , ffin ='', nrecord=30):
     url,req, result ={},{},{}
     url['pruebas'] =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
-    url['produccion']= f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
+    url['produccion']= f'https://www.easysales.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
     if tpst == 'pruebas':
         req['pruebas'] = requests.get(url['pruebas'])
     elif tpst == 'produccion':
@@ -93,13 +93,19 @@ def testProcess(idStudio,tpst='pruebas', finicio ='' , ffin ='', nrecord=30):
                 else:
                     data= pd.read_csv(path).tail(nrecord)#get the dataframe with numbers of rows
                     data= data[['Auditor','Response.Received','Descripcion','responseModified','ENCUESTADOR','pre_nombreestablecimiento']]
+                    data=data.rename(columns={#rename columns
+                        'Response.Received':'Fecha de envio',
+                        'responseModified':'Fecha modificacion',
+                        'ENCUESTADOR':'Encuestador',
+                        'pre_nombreestablecimiento':'Establecimiento'
+                    })
                     #setting headers 
                     result[k]=data.to_dict(orient='records') #saving information
         else: result[k]= [{'Informacion':f'Error en la consulta Estudio no encontrado  http:{k} : {req[k].status_code} '} ]
     return result
 
 
-def baseStudiesOperations(operation='r',data={}, raw=False,rd=None):
+def baseStudiesOperations(operation='r',data={}, raw=False,rd=None): #operations with the base csv Studies file
     #defult read file and data (r)
     #data is a dict with the inputs values 
     #raw if we want get the raw file 
