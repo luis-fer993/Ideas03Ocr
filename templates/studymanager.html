@@ -22,7 +22,7 @@ setTimeout(()=>{
 {%for row in studies%}
 
 <form action="" method="post" class="FormCont">
-    <table class="table table-striped"style="width: 50vw; margin:0 auto ; padding:.5rem " >
+    <table class="table table-striped"style="width: 80vw; margin:0 auto ; padding:.5rem " >
         <thead>
             <!-- <tr><th colspan="4">Base Estudios Activos</th></tr> -->
             <tr>
@@ -50,6 +50,16 @@ setTimeout(()=>{
                                     {% endif %}
                                     {%endfor%}
                                 </select>
+                                {%elif key == 'ambiente' %}
+                                    <select name="{{key}}" id="" required>
+                                    {%for itemsList in ambienteList%}
+                                    {% if itemsList == value %}
+                                        <option value="{{itemsList}}" selected>{{itemsList}}</option>
+                                    {% else %}
+                                        <option value="{{itemsList}}" >{{itemsList}}</option>
+                                    {% endif %}
+                                    {%endfor%}
+                                    </select>
                                 {% else%}
                                     <input type="text" name="{{key}}" value="{{value}}" required>
                                 {%endif%}
@@ -112,6 +122,12 @@ setTimeout(()=>{
                                         <option value="{{study.nombre}}" >{{study.nombre}}</option>
                                     {%endfor%}
                                 </select>
+                                {%elif key == 'ambiente' %}
+                                <select name="{{key}}" id="" required>
+                                    {%for itemsList in ambienteList%}
+                                        <option value="{{itemsList}}" >{{itemsList}}</option>
+                                    {%endfor%}
+                                    </select>
                                 {% else%}
                                     <input type="text" name="{{key}}" value="" required>
                                 {%endif%}

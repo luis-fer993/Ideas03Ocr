@@ -58,8 +58,12 @@ class DB():
         
 def testProcess(idStudio,tpst='pruebas', finicio ='' , ffin ='', nrecord=30):
     url,req, result ={},{},{}
+    tipoEstudio = baseStudiesOperations()
+    for row in tipoEstudio:
+        if idStudio ==row['idestudio']: #obtiene ambiente segun idEstudio
+            tpst=row['ambiente']
     url['pruebas'] =f'https://www.easysalespruebas.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
-    url['produccion']= f'https://www.easysales.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuestaRangoFechaRecepcion?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&fecha_inicial={finicio}000000&fecha_final={ffin}235959'
+    url['produccion']= f'https://www.easysales.com.co/ServiciosEasySurvey/api/ObtenerExportadoEncuesta?usuario=EasySurveyClientMeiko&password=EasySurveyClientMeiko&id_encuesta={idStudio}&idr_encabezado=0'
     if tpst == 'pruebas':
         req['pruebas'] = requests.get(url['pruebas'])
     elif tpst == 'produccion':
@@ -75,6 +79,7 @@ def testProcess(idStudio,tpst='pruebas', finicio ='' , ffin ='', nrecord=30):
         path=Path('tmp',f'Studytest{idStudio}_{k}.csv') # set the name of file
         
         listFile=os.listdir(path=Path('tmp')) #removing temporal files 
+        listflasksessions=os.listdir(path=Path('flask_session'))
         matching_files = [filename for filename in listFile if re.match(f'Studytest_*', filename)]
         for i in range(0,len(matching_files)):
             if os.path.exists(path=Path('tmp',matching_files[i])):

@@ -127,7 +127,7 @@ def test():
     var={}
     var['result']=''
     var['studies']=baseStudiesOperations()
-    #http://127.0.0.1:5000/test?Estudio=392&ambiente=pruebas
+    #http://127.0.0.1:5000/test?Estudio=392
     if request.method=='POST' or request.method=='GET' and (request.args.get('Estudio') != None and request.args.get('ambiente') != None):
         
         options = int(request.form.get('options') or 0) 
@@ -138,11 +138,11 @@ def test():
             Estudio=int(request.form.get('Estudio') or request.args.get('Estudio'))
             fechai, fechaf = '',''
         
-        ambiente=request.form.get('ambiente') or request.args.get('ambiente')
+        #ambiente=request.form.get('ambiente') or request.args.get('ambiente')
         nRecords=int(request.form.get('nRecords') or 30)
         #['2023', '09', '13'] exampe date 
         # 0 anio  1 month  2 day    
-        resultado = testProcess(tpst=ambiente, idStudio=Estudio, finicio=fechai, ffin=fechaf, nrecord=nRecords)
+        resultado = testProcess( idStudio=Estudio, finicio=fechai, ffin=fechaf, nrecord=nRecords)
         if type(resultado)==dict:var['result']=resultado
         else: var['alerts']=resultado
     return render_template('test.html',**var)
@@ -155,6 +155,7 @@ def StudyManager():
     ctx['studies']=baseStudiesOperations() #get DataFrame
     ctx['rawcsv']=baseStudiesOperations(raw=True) #get raw File csv
     ctx['listEst']=conn._newQuerySelect('''select * from jobOrder.estudios''') # get list from DB
+    ctx['ambienteList']=['pruebas','produccion']
     ctx['alert']=request.args.get('w') #if there is alerts
     ctx['Manager'] =True
     
@@ -163,6 +164,7 @@ def StudyManager():
         dataList['idtabla']=int(request.form.get('idtabla'))
         dataList['estudio']='' or request.form.get('estudio') 
         dataList['descripcion']='' or request.form.get('descripcion')
+        dataList['ambiente']='' or request.form.get('ambiente')
         if request.form.get('idestudio') == 'NoneType': dataList['idestudio']= 000
         else: dataList['idestudio']= request.form.get('idestudio')
         dataList['eliminar']= request.form.get('eliminar')
@@ -183,6 +185,7 @@ def studydata():
     EstNewData['estudio']=request.form.get('estudio')
     EstNewData['descripcion']=request.form.get('descripcion')
     EstNewData['idestudio']=request.form.get('idestudio')
+    EstNewData['ambiente']='' or request.form.get('ambiente')
     ctx['w']=baseStudiesOperations(operation='n',data=EstNewData)
     return redirect(url_for('StudyManager' ,**ctx))
     
@@ -190,7 +193,7 @@ def studydata():
 def login():
     ctx={}
     if session.get('user')==True:
-        return redirect(url_for('test'))
+        return redirect(url_for('StudyManager'))
     if request.method=='POST':
         user = request.form.get('user')
         password = request.form.get('pass') 
