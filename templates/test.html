@@ -53,7 +53,7 @@
             </td>
         </tr>
         <div class="advancedFeautures" >
-            <tr>
+            <tr style="display: none;" >
                 <td>
                     Opciones Avanzadas
                 </td>
@@ -103,7 +103,7 @@
             <td><input type="number" name="nRecords" id="" value="30" class="form-control" required ></td>
         </tr>
     </table>
-    <button  class="btn btn-primary">Enviar </button>
+    <button  class="btn btn-primary" onclick="alertChargue()">Enviar </button>
 </form>
 
 {%endif%}
@@ -186,6 +186,15 @@
             }
         ]
     });
+    function alertChargue(){
+        Swal.fire({title:"CARGANDO...",
+        text:"Por favor espere, este proceso puede tardar dependiendo la cantidad de regitros que se extraigan...",
+        imageUrl: 'https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif',
+        imageWidth: 100,
+        imageHeight: 100,
+    });
+
+    }
     </script>
 {% block scripts %}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
