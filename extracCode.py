@@ -50,3 +50,4 @@ extracted_text = perform_ocr(preprocessed_image)
     
     # Show the result
 show_result(preprocessed_image, extracted_text)
+

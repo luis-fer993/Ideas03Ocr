@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import requests
 import os
-from mysql.connector import connect , Error
+from MySQLdb import connect, Error
+#from mysql.connector import connect , Error
 import re
 from pathlib import Path
 import sqlite3
@@ -180,4 +181,5 @@ def baseQuery():
     conn.commit()
     conn.close()
     return data
+    
     
